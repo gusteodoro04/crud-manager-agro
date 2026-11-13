@@ -1,140 +1,142 @@
-# CRUD Manager — Propriedade Rural + Plantio
+# CRUD Manager — Rural Property + Planting
 
-Atividade 3 de Técnicas de Programação para Web II (IFMG). Projeto base: *crud-manager-public*
-(Servlets + JSP + JSTL, padrão DAO, MySQL), ampliado com **dois novos cadastros do tema
-agro**, **login** e **paginação em todos os cadastros**.
+Assignment 3 of Web Programming Techniques II (IFMG). Base project: *crud-manager-public*
+(Servlets + JSP + JSTL, DAO pattern, MySQL), extended with **two new agribusiness-themed registries**,
+**login**, and **pagination in every registry**.
 
-## O que o sistema faz
+## What the system does
 
-| Tela | Endereço | O que tem |
+| Screen | Address | What it has |
 |---|---|---|
-| Início | `/` | Painel da safra: números, situação dos plantios, alerta de colheitas atrasadas e **calendário da safra** (julho a junho, uma linha por propriedade) |
-| Propriedades | `/properties` | Cadastro novo. Busca por nome, cidade, UF ou dono |
-| Plantios | `/plantings` | Cadastro novo. Busca + abas por situação (Todos, Planejado, Em desenvolvimento, Colhido, Perdido) |
-| Usuários | `/users` | Cadastro do projeto base, agora com senha, busca e paginação |
-| Posts | `/posts` | Cadastro do projeto base, agora com busca e paginação |
-| Empresas | `/companies` | Cadastro do projeto base, agora com busca e paginação |
-| Entrar / Sair | `/login`, `/logout` | Tela de login e encerramento da sessão |
+| Home | `/` | Harvest dashboard: key numbers, planting status, overdue harvest alert, and a **harvest calendar** (July to June, one row per property) |
+| Properties | `/properties` | New registry. Search by name, city, state, or owner |
+| Plantings | `/plantings` | New registry. Search + tabs by status (All, Planned, Growing, Harvested, Lost) |
+| Users | `/users` | Base project registry, now with password, search, and pagination |
+| Posts | `/posts` | Base project registry, now with search and pagination |
+| Companies | `/companies` | Base project registry, now with search and pagination |
+| Sign in / Sign out | `/login`, `/logout` | Login screen and session logout |
 
-## Onde está cada item da atividade
+> The user interface is in Brazilian Portuguese (pt-BR). Labels in this README are translated for readability.
 
-| Exigência | Onde |
+## Where each assignment item is
+
+| Requirement | Where |
 |---|---|
-| Script SQL das novas tabelas | `script-sql.sql` (banco completo) e `script-migracao-atividade3.sql` (só acrescenta, não apaga nada) |
-| Classes do modelo | `model/RuralProperty.java`, `model/Planting.java` (+ enums `PropertyType`, `PlantingStatus`) |
-| Interfaces e classes DAO | `model/dao/RuralPropertyDAO` + `MySQLRuralPropertyDAO`, `PlantingDAO` + `MySQLPlantingDAO` |
-| Registro no DAOFactory | `model/dao/DAOFactory.java` (bloco `static`) |
+| SQL script for the new tables | `script-sql.sql` (full database) and `script-migracao-atividade3.sql` (only adds, deletes nothing) |
+| Model classes | `model/RuralProperty.java`, `model/Planting.java` (+ enums `PropertyType`, `PlantingStatus`) |
+| DAO interfaces and classes | `model/dao/RuralPropertyDAO` + `MySQLRuralPropertyDAO`, `PlantingDAO` + `MySQLPlantingDAO` |
+| Registration in DAOFactory | `model/dao/DAOFactory.java` (`static` block) |
 | Controllers (Servlets) | `controller/RuralPropertiesController.java`, `controller/PlantingsController.java` |
-| JSPs (lista, formulário, exclusão) | `rural-properties.jsp`, `form-rural-property.jsp`, `plantings.jsp`, `form-planting.jsp`; a exclusão é a janela de confirmação `WEB-INF/fragments/delete-dialog.jspf` |
-| Novos cadastros no cabeçalho | `nav-menu.jsp` |
+| JSPs (list, form, delete) | `rural-properties.jsp`, `form-rural-property.jsp`, `plantings.jsp`, `form-planting.jsp`; deletion is the confirmation dialog `WEB-INF/fragments/delete-dialog.jspf` |
+| New registries in the header | `nav-menu.jsp` |
 | Login | `login.jsp`, `controller/LoginController.java`, `controller/AuthenticationFilter.java`, `model/PasswordUtil.java` |
-| Paginação em todos os cadastros | `controller/Pagination.java`, `WEB-INF/fragments/pagination.jspf`, métodos `listPage` e `count` em todos os DAOs |
+| Pagination in all registries | `controller/Pagination.java`, `WEB-INF/fragments/pagination.jspf`, `listPage` and `count` methods in all DAOs |
 
-### Os dois cadastros novos
+### The two new registries
 
-Cada um tem 10 campos, de vários tipos de `input`, e **dois campos que são chave estrangeira**
-escolhidos em um `select` (a exigência era ao menos um).
+Each one has 10 fields, using several `input` types, and **two fields that are foreign keys**
+chosen from a `select` (the requirement was at least one).
 
-**Propriedade rural** (`rural_properties`)
+**Rural property** (`rural_properties`)
 
-| Campo | Tipo de entrada | Observação |
+| Field | Input type | Notes |
 |---|---|---|
-| Nome | `text` | obrigatório |
-| Tipo | `radio` (cartões) | Fazenda, Sítio, Chácara ou Granja |
-| Cidade | `text` | obrigatório |
-| Estado | `select` | as 27 UFs |
-| Área (ha) | `number` | maior que zero |
-| Data de aquisição | `date` | opcional, não pode ser futura |
-| Irrigada | `checkbox` (interruptor) | |
-| Link do mapa | `url` | opcional, só `http://` ou `https://` |
-| Observações | `textarea` | opcional |
-| **Dono** | `select` → `users` | **chave estrangeira** |
+| Name | `text` | required |
+| Type | `radio` (cards) | Farm (*Fazenda*), Small farm (*Sítio*), Country house (*Chácara*), or Poultry farm (*Granja*) |
+| City | `text` | required |
+| State | `select` | the 27 Brazilian states |
+| Area (ha) | `number` | greater than zero |
+| Acquisition date | `date` | optional, cannot be in the future |
+| Irrigated | `checkbox` (switch) | |
+| Map link | `url` | optional, only `http://` or `https://` |
+| Notes | `textarea` | optional |
+| **Owner** | `select` → `users` | **foreign key** |
 
-**Plantio** (`plantings`)
+**Planting** (`plantings`)
 
-| Campo | Tipo de entrada | Observação |
+| Field | Input type | Notes |
 |---|---|---|
-| Cultura | `text` + `datalist` | sugestões (Café, Soja, Milho…), aceita outras |
-| Variedade | `text` | opcional |
-| Data do plantio | `date` | |
-| Colheita prevista | `date` | não pode ser antes do plantio |
-| Área plantada (ha) | `number` | não pode passar da área da propriedade |
-| Produtividade (sacas/ha) | `number` | |
-| Situação | `radio` (botões) | Planejado, Em desenvolvimento, Colhido, Perdido |
-| Anotações | `textarea` | opcional |
-| **Propriedade** | `select` → `rural_properties` | **chave estrangeira** |
-| **Responsável** | `select` → `users` | **chave estrangeira** |
+| Crop | `text` + `datalist` | suggestions (Coffee, Soybean, Corn…), accepts others |
+| Variety | `text` | optional |
+| Planting date | `date` | |
+| Expected harvest | `date` | cannot be before the planting date |
+| Planted area (ha) | `number` | cannot exceed the property's area |
+| Yield (bags/ha) | `number` | |
+| Status | `radio` (buttons) | Planned, Growing, Harvested, Lost |
+| Notes | `textarea` | optional |
+| **Property** | `select` → `rural_properties` | **foreign key** |
+| **Responsible** | `select` → `users` | **foreign key** |
 
-Regras de integridade: uma propriedade que tem plantios **não pode ser excluída**; um usuário que é dono,
-responsável, autor de post ou tem empresa **não pode ser excluído**, nem a própria pessoa logada.
-Em todos os casos aparece uma mensagem explicando o motivo.
+Integrity rules: a property that has plantings **cannot be deleted**; a user who is an owner, is responsible
+for a planting, authored a post, or has a company **cannot be deleted**, nor can the logged-in user themselves.
+In every case a message explains why.
 
-## Como rodar
+## How to run
 
-**Requisitos:** Java 11 ou superior (compila também com Java 8), **Tomcat 10.1** (usa o namespace
-`jakarta.servlet`; testado no 10.1, e o código só usa recursos que o Tomcat 11 também oferece, mas ele não foi testado),
-MySQL 8 e o Eclipse (Dynamic Web Project) ou outra IDE com Tomcat.
+**Requirements:** Java 11 or higher (also compiles with Java 8), **Tomcat 10.1** (uses the `jakarta.servlet`
+namespace; tested on 10.1, and the code only uses features that Tomcat 11 also offers, but it has not been tested there),
+MySQL 8, and Eclipse (Dynamic Web Project) or another IDE with Tomcat support.
 
-1. **Banco de dados.** Escolha um dos scripts:
-   * banco novo ou pode apagar tudo: `script-sql.sql`
-     (começa com `DROP DATABASE crud_manager` — **apaga o banco `crud_manager` se ele existir** e não mexe em nenhum outro banco);
-   * manter os dados atuais: `script-migracao-atividade3.sql`
-     (pode ser executado mais de uma vez; quem ainda não tinha senha passa a ter `agro123`).
+1. **Database.** Choose one of the scripts:
+   * new database, or you can erase everything: `script-sql.sql`
+     (starts with `DROP DATABASE crud_manager` — **it deletes the `crud_manager` database if it exists** and does not touch any other database);
+   * keep the current data: `script-migracao-atividade3.sql`
+     (can be run more than once; users who did not have a password get `agro123`).
 
-   O jeito mais simples de executar (vale para `cmd` e PowerShell no Windows): abra o cliente com `mysql -u root -p` e
-   rode `source C:/caminho/da/pasta/script-sql.sql` (com barras normais `/`). No `cmd` também funciona
-   `mysql -u root -p < script-sql.sql`; no PowerShell o `<` não funciona.
-2. **Conexão.** Confira usuário e senha do MySQL em `src/main/java/model/dao/MySQLConnectionFactory.java`.
-3. **Codificação UTF-8.** Todos os arquivos estão em UTF-8. No Eclipse, confira em *Project → Properties → Resource →
-   Text file encoding* se está **UTF-8** (no Windows o padrão antigo é Cp1252 e as mensagens com acento ficam
-   como "nÃ£o"). Depois use *Project → Clean*.
-4. **Tomcat.** Publique o projeto no Tomcat 10.1 e abra `http://localhost:8080/<contexto>/`
-   (o endereço funciona em qualquer contexto, inclusive `ROOT`, porque todos os links usam o caminho do contexto).
-5. **Entrar.** Usuário `emerson@mail.com`, senha `agro123`. Todos os usuários de exemplo usam a mesma senha.
+   The simplest way to run it (works for `cmd` and PowerShell on Windows): open the client with `mysql -u root -p` and
+   run `source C:/path/to/the/folder/script-sql.sql` (using forward slashes `/`). In `cmd`,
+   `mysql -u root -p < script-sql.sql` also works; in PowerShell the `<` operator does not.
+2. **Connection.** Check the MySQL user and password in `src/main/java/model/dao/MySQLConnectionFactory.java`.
+3. **UTF-8 encoding.** All files are in UTF-8. In Eclipse, check *Project → Properties → Resource →
+   Text file encoding* is set to **UTF-8** (on Windows the old default is Cp1252 and accented messages show up
+   as "nÃ£o"). Then use *Project → Clean*.
+4. **Tomcat.** Deploy the project to Tomcat 10.1 and open `http://localhost:8080/<context>/`
+   (the address works under any context, including `ROOT`, because all links use the context path).
+5. **Sign in.** User `emerson@mail.com`, password `agro123`. All sample users share the same password.
 
-O script cria 12 usuários, 16 posts, 12 empresas, 12 propriedades e 29 plantios (as datas dos plantios são
-relativas ao dia em que o script roda, para o painel sempre mostrar uma safra em andamento).
+The script creates 12 users, 16 posts, 12 companies, 12 properties, and 29 plantings (planting dates are
+relative to the day the script runs, so the dashboard always shows a harvest season in progress).
 
-## Estrutura
+## Structure
 
 ```
 src/main/java
-  controller/   Servlets (um por cadastro), filtro de login, Pagination, ControllerUtil, painel (HomeController)
-  model/        entidades, enums, PasswordUtil (hash de senha), DateUtil, BrazilianStates
-  model/dao/    interfaces DAO, implementações MySQL, DAOFactory, DBHandler (conexão/PreparedStatement)
+  controller/   Servlets (one per registry), login filter, Pagination, ControllerUtil, dashboard (HomeController)
+  model/        entities, enums, PasswordUtil (password hashing), DateUtil, BrazilianStates
+  model/dao/    DAO interfaces, MySQL implementations, DAOFactory, DBHandler (connection/PreparedStatement)
 src/main/webapp
-  *.jsp         telas (login, painel, 5 listas e 5 formulários, página de erro)
-  WEB-INF/      web.xml, lib/ (JSTL e driver MySQL), tags/ (<ui:icon>, <ui:field>), fragments/ (csrf, flash, paginação, exclusão)
-  css/app.css   todo o visual (sem Bootstrap)
-  js/app.js     janela de exclusão, aviso (toast), mostrar senha, detalhes dos formulários
-  fonts/        Zilla Slab e Source Sans 3 (licença OFL, hospedadas aqui: funciona sem internet)
-  images/       ícones Lucide (sprite SVG, licença ISC/MIT: LICENSE-Lucide.txt), favicon, ilustração do login
+  *.jsp         screens (login, dashboard, 5 lists and 5 forms, error page)
+  WEB-INF/      web.xml, lib/ (JSTL and MySQL driver), tags/ (<ui:icon>, <ui:field>), fragments/ (csrf, flash, pagination, delete)
+  css/app.css   all the styling (no Bootstrap)
+  js/app.js     delete dialog, toast notification, show password, form details
+  fonts/        Zilla Slab and Source Sans 3 (OFL license, hosted here: works offline)
+  images/       Lucide icons (SVG sprite, ISC/MIT license: LICENSE-Lucide.txt), favicon, login illustration
 script-sql.sql  script-migracao-atividade3.sql
 ```
 
-## Segurança (resumo)
+## Security (summary)
 
-* Senhas com **PBKDF2-HMAC-SHA256** (600 mil repetições, sal aleatório por senha). Nada em texto puro.
-* **Filtro de login** em `/*`: sem sessão, qualquer tela vai para `/login`; os `.jsp` não abrem direto pela URL.
-* **Token CSRF** em todo formulário `POST` (verificado no filtro). Sair da conta também é `POST`.
-* Id da sessão trocado no login (contra *session fixation*), cookie `HttpOnly`, sessão de 60 minutos.
-* Mensagem única "E-mail ou senha incorretos" (não revela quais e-mails existem).
-* Todo SQL usa `PreparedStatement`; o `%` e o `_` digitados na busca são escapados; toda saída usa `<c:out>`.
-* Em produção com HTTPS, acrescente `<secure>true</secure>` ao `<cookie-config>` do `web.xml`.
+* Passwords hashed with **PBKDF2-HMAC-SHA256** (600,000 iterations, random salt per password). Nothing in plain text.
+* **Login filter** on `/*`: without a session, every screen redirects to `/login`; `.jsp` files cannot be opened directly by URL.
+* **CSRF token** on every `POST` form (checked in the filter). Signing out is also a `POST`.
+* Session id is rotated on login (against *session fixation*), `HttpOnly` cookie, 60-minute session.
+* Single message "Incorrect email or password" (does not reveal which emails exist).
+* All SQL uses `PreparedStatement`; `%` and `_` typed in the search are escaped; all output uses `<c:out>`.
+* In production with HTTPS, add `<secure>true</secure>` to the `<cookie-config>` in `web.xml`.
 
-## Mudanças em relação ao projeto base
+## Changes from the base project
 
-* `users` ganhou `password_hash` e e-mail único; `DBHandler` agora fecha as conexões (antes elas vazavam).
-* `CharacterEncodingFilter` foi substituído pelo `AuthenticationFilter` (que também define UTF-8).
-* Bootstrap, jQuery, `index.jsp` e `modal.html` saíram; o visual agora é `css/app.css` + `js/app.js`.
-* Os três `taglibs-standard-*.jar` (versão `javax`) foram removidos de `WEB-INF/lib`: conflitavam com o JSTL
-  `jakarta` (`jakarta.servlet.jsp.jstl-*.jar`) e só funcionavam no Windows por causa da ordem dos jars.
-* `web.xml`: idioma `pt_BR` para números e datas, UTF-8 para todos os JSPs, sessão e páginas de erro.
+* `users` gained `password_hash` and a unique email; `DBHandler` now closes connections (before, they leaked).
+* `CharacterEncodingFilter` was replaced by `AuthenticationFilter` (which also sets UTF-8).
+* Bootstrap, jQuery, `index.jsp`, and `modal.html` were removed; the look is now `css/app.css` + `js/app.js`.
+* The three `taglibs-standard-*.jar` files (`javax` version) were removed from `WEB-INF/lib`: they conflicted with
+  the `jakarta` JSTL (`jakarta.servlet.jsp.jstl-*.jar`) and only worked on Windows because of jar ordering.
+* `web.xml`: `pt_BR` locale for numbers and dates, UTF-8 for all JSPs, session, and error pages.
 
-## Limitações conhecidas
+## Known limitations
 
-* Não há limite de tentativas de login (um *rate limit* seria o próximo passo).
-* Na lista de propriedades, o número de plantios é um link para a lista de plantios filtrada pelo **nome** da
-  propriedade; se duas propriedades tiverem nomes parecidos, aparecem plantios das duas. Um filtro por id seria mais exato.
-* Selects de chave estrangeira listam todos os registros: com milhares de usuários, o ideal seria uma busca com autocompletar.
-* O cookie de sessão não é `Secure` porque o sistema roda em HTTP no desenvolvimento.
+* There is no login attempt limit (rate limiting would be the next step).
+* In the property list, the planting count links to the planting list filtered by the property **name**;
+  if two properties have similar names, plantings from both appear. Filtering by id would be more accurate.
+* Foreign key selects list all records: with thousands of users, a search with autocomplete would be ideal.
+* The session cookie is not `Secure` because the system runs over HTTP in development.
