@@ -1,0 +1,60 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="ui" tagdir="/WEB-INF/tags" %>
+<%-- Barra de paginação, igual nas cinco listas. Usa o objeto "pagination" (controller.Pagination):
+     intervalo mostrado, botões anterior/próxima, números das páginas e itens por página. --%>
+<c:if test="${pagination.totalItems > 0}">
+	<div class="pager-bar">
+		<p class="pager-range">Mostrando <strong>${pagination.firstItem}–${pagination.lastItem}</strong> de <strong>${pagination.totalItems}</strong></p>
+
+		<c:if test="${pagination.totalPages > 1}">
+			<nav class="pager" aria-label="Paginação">
+				<c:choose>
+					<c:when test="${pagination.hasPrevious}">
+						<a class="pager-item" rel="prev" aria-label="Página anterior" href="<c:out value='${ctx}${pagination.urlFor(pagination.page - 1)}'/>"><ui:icon name="chevron-left"/></a>
+					</c:when>
+					<c:otherwise>
+						<span class="pager-item is-disabled" aria-hidden="true"><ui:icon name="chevron-left"/></span>
+					</c:otherwise>
+				</c:choose>
+
+				<c:forEach var="number" items="${pagination.pages}">
+					<c:choose>
+						<c:when test="${number == -1}">
+							<span class="pager-item pager-gap" aria-hidden="true">…</span>
+						</c:when>
+						<c:when test="${number == pagination.page}">
+							<span class="pager-item pager-number" aria-current="page" aria-label="Página ${number}, atual">${number}</span>
+						</c:when>
+						<c:otherwise>
+							<a class="pager-item pager-number" aria-label="Ir para a página ${number}" href="<c:out value='${ctx}${pagination.urlFor(number)}'/>">${number}</a>
+						</c:otherwise>
+					</c:choose>
+				</c:forEach>
+
+				<c:choose>
+					<c:when test="${pagination.hasNext}">
+						<a class="pager-item" rel="next" aria-label="Próxima página" href="<c:out value='${ctx}${pagination.urlFor(pagination.page + 1)}'/>"><ui:icon name="chevron-right"/></a>
+					</c:when>
+					<c:otherwise>
+						<span class="pager-item is-disabled" aria-hidden="true"><ui:icon name="chevron-right"/></span>
+					</c:otherwise>
+				</c:choose>
+			</nav>
+		</c:if>
+
+		<c:if test="${pagination.showPageSize}">
+			<form class="page-size" method="get" action="<c:out value='${ctx}${pagination.path}'/>">
+				<c:forEach var="entry" items="${pagination.params}">
+					<input type="hidden" name="<c:out value='${entry.key}'/>" value="<c:out value='${entry.value}'/>">
+				</c:forEach>
+				<label for="page-size-select">Itens por página</label>
+				<select class="select" id="page-size-select" name="size" data-autosubmit>
+					<c:forEach var="size" items="${pagination.pageSizes}">
+						<option value="${size}" ${size == pagination.pageSize ? 'selected' : ''}>${size}</option>
+					</c:forEach>
+				</select>
+				<noscript><button class="btn btn-secondary" type="submit">Aplicar</button></noscript>
+			</form>
+		</c:if>
+	</div>
+</c:if>

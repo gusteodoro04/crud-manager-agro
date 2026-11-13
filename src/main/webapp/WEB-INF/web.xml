@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="https://jakarta.ee/xml/ns/jakartaee" xmlns:web="http://xmlns.jcp.org/xml/ns/javaee" xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_5_0.xsd" id="WebApp_ID" version="5.0">
+  <display-name>crud-manager-public</display-name>
+
+  <!--
+    Atividade 3
+    ============
+    Não há mais <welcome-file-list>: a raiz do sistema ("/") é atendida pelo
+    HomeController (painel inicial), mapeado com urlPatterns = {"", "/home"}.
+  -->
+
+  <!-- Números e datas sempre no padrão brasileiro (1.234,5 e 09/11/2026),
+       qualquer que seja o idioma configurado no navegador de quem acessa. -->
+  <context-param>
+    <param-name>jakarta.servlet.jsp.jstl.fmt.locale</param-name>
+    <param-value>pt_BR</param-value>
+  </context-param>
+
+  <!-- Sessão (login): expira após 60 minutos sem uso; o cookie não é lido por JavaScript
+       (http-only) e o id da sessão só trafega em cookie, nunca na URL.
+       Em produção com HTTPS, acrescente <secure>true</secure> dentro de <cookie-config>. -->
+  <session-config>
+    <session-timeout>60</session-timeout>
+    <cookie-config>
+      <http-only>true</http-only>
+    </cookie-config>
+    <tracking-mode>COOKIE</tracking-mode>
+  </session-config>
+
+  <!-- Codificação dos arquivos JSP: UTF-8 em TODOS (inclusive os incluídos com <%@ include %>,
+       como nav-menu.jsp e os .jspf). Sem isto, o Tomcat lê um arquivo incluído que não tenha
+       <%@ page pageEncoding="UTF-8" %> como ISO-8859-1 e os acentos viram "InÃ­cio". -->
+  <jsp-config>
+    <jsp-property-group>
+      <url-pattern>*.jsp</url-pattern>
+      <url-pattern>*.jspf</url-pattern>
+      <page-encoding>UTF-8</page-encoding>
+    </jsp-property-group>
+  </jsp-config>
+
+  <!-- Páginas de erro amigáveis (em vez da tela técnica do Tomcat) -->
+  <error-page>
+    <error-code>403</error-code>
+    <location>/error.jsp</location>
+  </error-page>
+  <error-page>
+    <error-code>404</error-code>
+    <location>/error.jsp</location>
+  </error-page>
+  <error-page>
+    <error-code>405</error-code>
+    <location>/error.jsp</location>
+  </error-page>
+  <error-page>
+    <error-code>500</error-code>
+    <location>/error.jsp</location>
+  </error-page>
+  <error-page>
+    <exception-type>java.lang.Throwable</exception-type>
+    <location>/error.jsp</location>
+  </error-page>
+</web-app>

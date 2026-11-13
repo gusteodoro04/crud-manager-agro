@@ -1,0 +1,10 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="ui" tagdir="/WEB-INF/tags" %>
+<%-- Aviso temporário (toast). O controller deixa "message" e "alertType" (1 = sucesso, 0 = erro) --%>
+<c:if test="${not empty message}">
+	<div class="toast ${alertType eq 1 ? 'toast-success' : 'toast-error'}" data-toast role="${alertType eq 1 ? 'status' : 'alert'}">
+		<span class="toast-icon"><ui:icon name="${alertType eq 1 ? 'circle-check' : 'circle-alert'}"/></span>
+		<p class="toast-text"><c:out value="${message}"/></p>
+		<button type="button" class="btn-icon" data-toast-close aria-label="Fechar aviso"><ui:icon name="x"/></button>
+	</div>
+</c:if>

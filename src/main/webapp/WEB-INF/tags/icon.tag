@@ -1,0 +1,1 @@
+<%@ tag body-content="empty" pageEncoding="UTF-8" trimDirectiveWhitespaces="true" %><%@ attribute name="name" required="true" %><svg class="icon" aria-hidden="true" focusable="false"><use href="${pageContext.request.contextPath}/images/icons.svg#${name}"/></svg>
